@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 Юный цифровой путешественник</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Comic Sans MS', 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bubbles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute; bottom: -100px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        @keyframes slideIn {
+            0% { transform: translateY(50px) scale(0.9); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        h1 {
+            color: #2c3e50; margin-bottom: 20px; font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h2 { color: #34495e; margin-bottom: 25px; font-size: 22px; line-height: 1.4; }
+        p { font-size: 18px; color: #555; line-height: 1.6; margin-bottom: 15px; }
+
+        .emoji-title {
+            font-size: 60px; margin-bottom: 15px;
+            animation: wiggle 2s ease-in-out infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        input[type="text"] {
+            width: 80%; padding: 15px 20px; margin: 20px 0;
+            border: 3px solid #e0e0e0; border-radius: 50px;
+            font-size: 18px; text-align: center; outline: none;
+            transition: all 0.3s; background: #f8f9fa;
+        }
+
+        input[type="text"]:focus {
+            border-color: #667eea; background: white;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 18px 40px;
+            font-size: 20px; font-weight: bold; border-radius: 50px;
+            cursor: pointer; transition: all 0.3s; margin: 10px;
+            display: inline-block;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .grade-btn {
+            width: 45%; font-size: 20px; padding: 25px 20px;
+            margin: 10px 2%; position: relative; overflow: hidden;
+        }
+
+        .grade-btn:nth-child(1) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .grade-btn:nth-child(2) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .grade-btn:nth-child(3) { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .grade-btn:nth-child(4) { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+
+        .option-btn {
+            display: block; width: 100%;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50; border: 3px solid transparent;
+            padding: 20px; margin: 12px 0;
+            font-size: 16px; border-radius: 15px;
+            cursor: pointer; transition: all 0.3s;
+            text-align: left; font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .option-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; transform: translateX(10px) scale(1.02);
+            border-color: white;
+        }
+
+        .hidden { display: none; }
+
+        .grade-result {
+            font-size: 120px; font-weight: bold; margin: 20px 0;
+            animation: popIn 0.8s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        .grade-5 { color: #27ae60; }
+        .grade-4 { color: #2980b9; }
+        .grade-3 { color: #f39c12; }
+        .grade-2 { color: #e74c3c; }
+
+        .progress {
+            font-size: 16px; color: #7f8c8d;
+            margin-bottom: 15px; font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%; height: 15px; background: #ecf0f1;
+            border-radius: 10px; margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            background-size: 200% 100%;
+            animation: shimmer 2s linear infinite;
+            transition: width 0.5s ease;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            border-radius: 20px; padding: 25px; margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .result-text {
+            font-size: 20px; color: #555; margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+        }
+
+        .confetti {
+            position: fixed; width: 10px; height: 10px;
+            top: -10px; animation: confettiFall linear forwards;
+            z-index: 1000;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .sending-status {
+            font-size: 14px; color: #7f8c8d; margin-top: 15px; font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 25px; border-radius: 20px; }
+            h1 { font-size: 24px; }
+            .grade-btn { width: 90%; font-size: 18px; }
+            .btn { font-size: 16px; padding: 15px 30px; }
+            .option-btn { font-size: 15px; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bubbles" id="bubbles"></div>
+
+    <!-- Экран 1: Выбор класса -->
+    <div class="container" id="grade-screen">
+        <div class="emoji-title">🌐🚀</div>
+        <h1>Юный цифровой путешественник</h1>
+        <p>Привет, герой! 🦸 Выбери свой класс, чтобы начать приключение:</p>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px;">
+            <button class="btn grade-btn" onclick="selectGrade('1')">🌟 1 класс</button>
+            <button class="btn grade-btn" onclick="selectGrade('2')">⭐ 2 класс</button>
+            <button class="btn grade-btn" onclick="selectGrade('3')">💫 3 класс</button>
+            <button class="btn grade-btn" onclick="selectGrade('4')">🏆 4 класс</button>
+        </div>
+    </div>
+
+    <!-- Экран 2: Ввод имени -->
+    <div class="container hidden" id="name-screen">
+        <div class="emoji-title">🎮</div>
+        <h1>Отлично!</h1>
+        <p>Введи свой номер по списку или придумай крутой никнейм:</p>
+        <input type="text" id="student-name" placeholder="Твой никнейм или номер 🎯">
+        <br>
+        <button class="btn" onclick="startTest()">🚀 Начать тест!</button>
+    </div>
+
+    <!-- Экран 3: Вопросы -->
+    <div class="container hidden" id="quiz-screen">
+        <div class="progress" id="progress-text">Вопрос 1 из 5</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+        </div>
+        <div class="question-card">
+            <h2 id="question-text">Текст вопроса</h2>
+        </div>
+        <div id="options-container"></div>
+    </div>
+
+    <!-- Экран 4: Результат -->
+    <div class="container hidden" id="result-screen">
+        <div class="emoji-title">🎉</div>
+        <h1>Тест завершён!</h1>
+        <p style="font-size: 22px; font-weight: bold;">Твоя итоговая оценка:</p>
+        <div class="grade-result" id="final-grade">5</div>
+        <div class="result-text" id="result-text">Спасибо за прохождение!</div>
+        <div class="sending-status" id="sending-status">📤 Сохраняем результат...</div>
+        <button class="btn" onclick="resetToStart()">🔄 Пройти ещё раз</button>
+    </div>
+
+    <script>
+        // ==========================================
+        // ВСТАВЬ СЮДА СВОЮ РАБОЧУЮ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT
+        // ==========================================
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuojSkPR8lrzbv3xPnj9NZD607FEiXBUeojg1x8hB-5Eh-PfWzti5p4fDpD-JsolAX/exec';
+        // ==========================================
+
+        function createBubbles() {
+            const bubblesContainer = document.getElementById('bubbles');
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = Math.random() * 60 + 20;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+                bubblesContainer.appendChild(bubble);
+            }
+        }
+        createBubbles();
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // База вопросов с ДЛИННЫМИ и ПОДРОБНЫМИ вариантами ответов
+        const questionsData = {
+            '1': [
+                { text: "🎮 В игре незнакомец пишет: «Привет! Дай мне свой пароль, и я подарю тебе 1000 монет». Что ты сделаешь?", options: ["Отдам пароль, потому что хочу получить бесплатные монеты как можно скорее.", "Вежливо откажу, заблокирую этого пользователя и расскажу о ситуации родителям.", "Спрошу пароль у мамы или папы и перешлю его незнакомцу, чтобы получить подарок."], correctIndex: 1 },
+                { text: "📱 Тебе пришло сообщение: «Поздравляем! Ты выиграл новый телефон. Чтобы его получить, введи номер банковской карты мамы». Как ты поступишь?", options: ["Сразу введу номер карты, потому что это реальный выигрыш и его нельзя упускать.", "Проигнорирую и удалю это сообщение, потому что это явный обман мошенников.", "Перешлю это сообщение всем своим друзьям, чтобы они тоже выиграли телефон."], correctIndex: 1 },
+                { text: "😢 Если кто-то в общем чате начинает обижать тебя или твоих друзей обидными словами, что лучше всего сделать?", options: ["Начну обижать его в ответ, чтобы он понял, как это неприятно, и отстал от нас.", "Сразу расскажу об этом взрослым (родителям или учителю) и заблокирую обидчика.", "Удалю игру или приложение навсегда и больше никогда не буду пользоваться интернетом."], correctIndex: 1 },
+                { text: "👦 Твой лучший друг в классе просит дать ему пароль от твоего любимого аккаунта, чтобы «просто посмотреть». Что ты ответишь?", options: ["Дам пароль без раздумий, потому что мы лучшие друзья и друг другу доверяем на 100%.", "Вежливо, но твёрдо откажу, потому что пароль должен знать только я и мои родители.", "Дам пароль, но потом сразу же поменяю его, чтобы друг не успел ничего сделать."], correctIndex: 1 },
+                { text: "👮 В игре тебе пишет пользователь с ником «Главный Администратор» и требует логин и пароль для «проверки аккаунта». Что это?", options: ["Настоящий администратор игры, которому я обязан подчиниться и отправить свои данные.", "Мошенник, потому что настоящие администраторы никогда не просят пароли у игроков.", "Просто шутка моего друга, который решил меня разыграть, поэтому можно спокойно ответить."], correctIndex: 1 }
+            ],
+            '2': [
+                { text: "💎 Ты нашёл в интернете сайт с яркой рекламой: «Бесплатно дам 1000 гемов за твой пароль!». Каковы будут твои действия?", options: ["Быстро введу свой пароль, потому что хочу получить бесплатную игровую валюту прямо сейчас.", "Сразу закрою эту вкладку, потому что понимаю, что это ловушка для кражи моего аккаунта.", "Попрошу своего друга ввести его пароль на этом сайте, чтобы сначала проверить, работает ли это."], correctIndex: 1 },
+                { text: "💬 В школьном чате кто-то начинает писать обидные и злые комментарии про твоего одноклассника. Как ты поступишь?", options: ["Тоже начну писать обидные вещи, потому что все так делают и я не хочу выделяться.", "Промолчу и сделаю вид, что ничего не замечаю, чтобы меня самого не начали обижать.", "Пожалуюсь учителю или модератору чата и напишу слово поддержки своему однокласснику."], correctIndex: 2 },
+                { text: "🌳 Незнакомец из интернета, который представляется твоим сверстником, предлагает встретиться в парке и дарит виртуальный подарок. Что сделаешь?", options: ["С радостью пойду на встречу, потому что в жизни он может оказаться очень классным и весёлым другом.", "Сразу расскажу об этом предложении родителям и заблокирую этого пользователя во всех сетях.", "Попрошу его сначала прислать мне ещё один дорогой виртуальный подарок, а потом подумаю о встрече."], correctIndex: 1 },
+                { text: "🏠 Какую информацию НИ В КОЕМ СЛУЧАЕ нельзя указывать в открытом профиле своей игры или социальной сети?", options: ["Свой самый любимый цвет, название любимой музыкальной группы или имя своего домашнего питомца.", "Точный адрес своего дома, номер телефона и название школы, в которой ты учишься.", "Свой любимый школьный предмет или название мультфильма, который ты недавно посмотрел."], correctIndex: 1 },
+                { text: "🔗 Твой друг прислал тебе ссылку со словами: «Смотри, я нашёл крутой чит для нашей любимой игры!». Что ты сделаешь?", options: ["Сразу перейду по этой ссылке, потому что мой друг никогда не станет меня обманывать или подставлять.", "Не буду переходить по ссылке, так как понимаю, что даже от друзей могут приходить опасные вирусы.", "Перейду по ссылке, но только со своего телефона, потому что на телефоне вирусов не бывает."], correctIndex: 1 },
+                { text: "📲 Ты скачал «бесплатную» игру с подозрительного сайта, и после этого телефон начал сильно тормозить и греться. Что произошло?", options: ["Телефон просто сильно устал от долгой работы, и ему нужно дать время отдохнуть и остыть.", "Скорее всего, я скачал вирус вместе с игрой, поэтому нужно срочно рассказать об этом родителям.", "Нужно просто перезагрузить телефон, и все проблемы с торможением сразу же волшебным образом исчезнут."], correctIndex: 1 },
+                { text: "📸 В социальной сети незнакомый человек долго с тобой общается, постоянно дарит подарки и настойчиво просит прислать твои фотографии. Что это может быть?", options: ["Это просто новый хороший и добрый друг, который хочет со мной подружиться и общаться.", "Это очень опасно: нужно немедленно рассказать родителям о ситуации и заблокировать этого человека.", "Это просто фанат моей страницы, которому очень нравится мой профиль и мои увлечения."], correctIndex: 1 }
+            ],
+            '3': [
+                { text: "🔐 Твой лучший друг в классе настойчиво просит пароль от твоего аккаунта в игре, чтобы «просто посмотреть». Что ты сделаешь?", options: ["Дам ему пароль без лишних вопросов, потому что мы лучшие друзья и нам нечего скрывать друг от друга.", "Твёрдо откажу, потому что пароль — это личная информация, которую должен знать только я и мои родители.", "Дам пароль на один день, но потом сразу же поменяю его на новый, чтобы друг не успел ничего сделать."], correctIndex: 1 },
+                { text: "🎁 Сайт обещает бесплатно начислить 1000 робуксов, если ты введёшь свой логин и пароль от аккаунта. Каковы твои действия?", options: ["Введу свои данные, потому что хочу получить бесплатные монеты и не упустить такой редкий и выгодный шанс.", "Сразу закрою этот сайт, потому что понимаю, что это классическая ловушка интернет-мошенников.", "Попрошу своего друга ввести свои данные на этом сайте, чтобы сначала проверить, действительно ли это работает."], correctIndex: 1 },
+                { text: "😠 В общем чате кто-то начинает писать обидные и злые комментарии про твоего одноклассника. Как ты поступишь?", options: ["Тоже начну писать обидные вещи в его адрес, потому что все так делают и я не хочу отставать от остальных.", "Промолчу и сделаю вид, что ничего не замечаю, потому что считаю, что это меня совершенно не касается.", "Пожалуюсь учителю или модератору чата и напишу слово поддержки своему однокласснику, чтобы он не был один."], correctIndex: 2 },
+                { text: "🌳 Незнакомец, представляющийся твоим сверстником, предлагает встретиться в парке после школы. Что ты сделаешь?", options: ["Пойду на встречу, потому что в реальной жизни он может оказаться очень классным и весёлым другом.", "Сразу расскажу об этом предложении родителям и заблокирую этого пользователя во всех социальных сетях.", "Пойду на встречу, но обязательно возьму с собой друга, чтобы нам вместе было безопаснее и веселее."], correctIndex: 1 },
+                { text: "🏠 Какую информацию НИ В КОЕМ СЛУЧАЕ нельзя публиковать в открытом профиле своей страницы или игры?", options: ["Свой самый любимый цвет, название любимой музыкальной группы или кличку своего домашнего питомца.", "Точный адрес своего дома, номер мобильного телефона и название школы, в которой ты учишься.", "Свой любимый школьный предмет или название интересного фильма, который ты недавно посмотрел."], correctIndex: 1 },
+                { text: "📧 Тебе пришло письмо на почту: «Вы выиграли iPhone! Введите номер карты родителей для оплаты доставки». Что это?", options: ["Реальный выигрыш, поэтому нужно как можно скорее ввести данные карты, чтобы не упустить свой приз.", "Мошенничество, поэтому нужно немедленно удалить это письмо и ни в коем случае не вводить данные карты.", "Просто обычная реклама, поэтому можно спокойно перейти по ссылке и посмотреть, что там предлагается."], correctIndex: 1 },
+                { text: "👮 В игре тебе пишет «Администратор» и просит пароль для «проверки аккаунта на нарушения». Как ты поступишь?", options: ["Дам пароль, потому что администратор имеет полное право проверять аккаунты и я должен ему подчиниться.", "Заблокирую этого пользователя, потому что настоящие администраторы никогда не просят пароли у игроков.", "Спрошу у своего друга, что мне делать в этой ситуации, и поступлю так, как он мне посоветует."], correctIndex: 1 },
+                { text: "🔗 Друг прислал ссылку со словами «Смотри, какой классный чит для игры, я уже проверил!». Что сделаешь?", options: ["Перейду по ссылке, потому что раз друг уже проверил, значит, это точно безопасно и можно не бояться.", "Не буду переходить по ссылке, так как понимаю, что аккаунт друга могли взломать и рассылать вирусы от его имени.", "Перейду по ссылке, но только со своего телефона, потому что на мобильных устройствах вирусов не бывает."], correctIndex: 1 },
+                { text: "📲 Ты скачал «бесплатную» игру со странного сайта, и после этого телефон начал сильно тормозить и греться. Что произошло?", options: ["Телефон просто сильно устал от долгой работы, и ему нужно дать время отдохнуть, перезагрузить и остыть.", "Скорее всего, я скачал вирус вместе с игрой, поэтому нужно срочно рассказать об этом своим родителям.", "Нужно просто перезагрузить телефон, и все проблемы с торможением и нагревом сразу же волшебным образом исчезнут."], correctIndex: 1 },
+                { text: "📸 В социальной сети незнакомый человек долго с тобой общается, дарит подарки и настойчиво просит прислать твои фотографии. Что это?", options: ["Это просто новый хороший и добрый друг, который хочет со мной подружиться и общаться на интересные темы.", "Это очень опасно: нужно немедленно рассказать родителям о ситуации и заблокировать этого человека.", "Это просто фанат моей страницы, которому очень нравится мой профиль, мои увлечения и мои публикации."], correctIndex: 1 }
+            ],
+            '4': [
+                { text: "🔐 Твой лучший друг просит пароль от твоего аккаунта «просто посмотреть». Что сделаешь?", options: ["Дам пароль без лишних вопросов, потому что мы лучшие друзья и нам нечего скрывать друг от друга.", "Твёрдо откажу, потому что пароль — это личная информация, которую должен знать только я и мои родители.", "Дам пароль на один день, но потом сразу же поменяю его на новый, чтобы друг не успел ничего сделать."], correctIndex: 1 },
+                { text: "🎁 Сайт обещает бесплатно дать 1000 робуксов за логин и пароль. Твои действия?", options: ["Введу данные, потому что хочу получить бесплатные монеты и не упустить такой редкий и выгодный шанс.", "Закрою сайт, потому что понимаю, что это классическая ловушка (фишинг) для кражи моего аккаунта.", "Попрошу друга ввести свои данные на этом сайте, чтобы сначала проверить, действительно ли это работает."], correctIndex: 1 },
+                { text: "😠 В чате кто-то пишет обидные комментарии про одноклассника. Как поступишь?", options: ["Тоже напишу обидные вещи в его адрес, потому что все так делают и я не хочу отставать от остальных.", "Промолчу и сделаю вид, что ничего не замечаю, потому что считаю, что это меня совершенно не касается.", "Пожалуюсь модератору или учителю и напишу слово поддержки однокласснику, чтобы он не был один."], correctIndex: 2 },
+                { text: "🌳 Незнакомец из интернета предлагает встретиться в парке после школы. Что сделаешь?", options: ["Пойду на встречу, потому что в реальной жизни он может оказаться очень классным и весёлым другом.", "Категорически откажу, сразу расскажу родителям и заблокирую этого пользователя во всех сетях.", "Пойду на встречу, но обязательно возьму с собой друга, чтобы нам вместе было безопаснее и веселее."], correctIndex: 1 },
+                { text: "🏠 Что из этого НЕЛЬЗЯ публиковать в открытом профиле?", options: ["Свой самый любимый цвет, название любимой музыкальной группы или кличку своего домашнего питомца.", "Номер своего мобильного телефона, точный адрес дома и название школы, в которой ты учишься.", "Свой любимый школьный предмет или название интересного фильма, который ты недавно посмотрел."], correctIndex: 1 },
+                { text: "📧 Письмо от «Банка»: «Введите номер карты для проверки безопасности». Что это?", options: ["Реальная проверка безопасности, поэтому нужно как можно скорее ввести данные, чтобы не заблокировали счёт.", "Мошенничество (фишинг), поэтому нужно немедленно удалить это письмо и ни в коем случае не вводить данные.", "Просто обычная реклама, поэтому можно спокойно перейти по ссылке и посмотреть, что там предлагается."], correctIndex: 1 },
+                { text: "👮 В игре пишет «Модератор» и просит пароль для «проверки». Как поступишь?", options: ["Дам пароль, потому что модератор имеет полное право проверять аккаунты и я должен ему подчиниться.", "Заблокирую этого пользователя, потому что настоящие модераторы никогда не просят пароли у игроков.", "Спрошу у своего друга, что мне делать в этой ситуации, и поступлю так, как он мне посоветует."], correctIndex: 1 },
+                { text: "🎮 В Discord прислали ссылку «Нажми, чтобы получить бесплатный Nitro». Что сделаешь?", options: ["Нажму на ссылку, потому что очень хочу получить бесплатный Nitro и не упустить такой редкий шанс.", "Не нажму на ссылку, потому что понимаю, что это распространённый способ кражи аккаунта мошенниками.", "Нажму на ссылку, но только со своего телефона, потому что на мобильных устройствах вирусов не бывает."], correctIndex: 1 },
+                { text: "📲 Ты скачал «бесплатную» программу со странного сайта, и антивирус начал ругаться. Что делать?", options: ["Отключу антивирус и установлю программу, потому что антивирусы часто ошибаются и мешают работе.", "Удалю этот файл, потому что понимаю, что это может быть опасный вирус, и расскажу об этом родителям.", "Просто перезагружу компьютер, и все проблемы с антивирусом и программой сразу же волшебным образом исчезнут."], correctIndex: 1 },
+                { text: "📸 Незнакомец в сети просит прислать «смешные» фотографии тебя в ванной. Что это?", options: ["Просто безобидная шутка, поэтому можно отправить одну фотографию, чтобы поддержать весёлый разговор.", "Опасно! Нужно немедленно заблокировать этого человека и обязательно рассказать о ситуации родителям.", "Нормальное общение в интернете, поэтому можно спокойно отправить фотографию, если он кажется добрым."], correctIndex: 1 },
+                { text: "🤖 На сайте всплыло окно: «Нажми сюда, чтобы доказать, что ты не робот». Твои действия?", options: ["Нажму на кнопку, потому что хочу как можно быстрее доказать, что я человек, и продолжить пользоваться сайтом.", "Закрою вкладку, потому что на подозрительных сайтах такие окна часто являются ловушкой для установки вирусов.", "Нажму на кнопку очень быстро, потому что думаю, что чем быстрее я это сделаю, тем меньше шансов поймать вирус."], correctIndex: 1 },
+                { text: "💰 Кто-то угрожает в сети, что расскажет всем твой секрет, если ты не переведёшь ему деньги. Что делать?", options: ["Переведу деньги, потому что очень боюсь, что он действительно расскажет мой секрет всем моим друзьям и знакомым.", "Сохраню всю переписку, немедленно расскажу родителям и обращусь за помощью в полицию или к учителю.", "Удалю переписку и буду молчать, потому что думаю, что если я не буду отвечать, то он быстро обо мне забудет."], correctIndex: 1 },
+                { text: "🔐 Как защитить свой аккаунт, даже если мошенник каким-то образом узнал твой пароль?", options: ["Никак, придётся создавать совершенно новый аккаунт с нуля, потому что старый уже точно скомпрометирован.", "Включить двухфакторную аутентификацию (2FA), чтобы для входа требовался дополнительный код из СМС или приложения.", "Просто поменять пароль на более сложный, но это не даст гарантии, что мошенник не подберёт его снова."], correctIndex: 1 }
+            ]
+        };
+
+        let selectedGrade = '';
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let studentName = "";
+        let userAnswers = [];
+
+        function selectGrade(grade) {
+            selectedGrade = grade;
+            document.getElementById('grade-screen').classList.add('hidden');
+            document.getElementById('name-screen').classList.remove('hidden');
+        }
+
+        function startTest() {
+            const nameInput = document.getElementById('student-name').value.trim();
+            if (nameInput === "") {
+                alert("Пожалуйста, введи никнейм или номер! 🎯");
+                return;
+            }
+            studentName = nameInput;
+
+            const originalQuestions = questionsData[selectedGrade];
+            currentQuestions = originalQuestions.map(q => {
+                const optionsWithFlag = q.options.map((opt, idx) => ({
+                    text: opt,
+                    isCorrect: idx === q.correctIndex
+                }));
+                const shuffledOptions = shuffleArray(optionsWithFlag);
+                return {
+                    text: q.text,
+                    options: shuffledOptions
+                };
+            });
+
+            currentQuestions = shuffleArray(currentQuestions);
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+
+            document.getElementById('name-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = currentQuestions[currentQuestionIndex];
+            document.getElementById('question-text').innerText = q.text;
+            document.getElementById('progress-text').innerText = `Вопрос ${currentQuestionIndex + 1} из ${currentQuestions.length}`;
+            
+            const progressPercent = (currentQuestionIndex / currentQuestions.length) * 100;
+            document.getElementById('progress-fill').style.width = progressPercent + '%';
+            
+            const optionsDiv = document.getElementById('options-container');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach((option) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = option.text;
+                btn.onclick = () => selectAnswer(option.isCorrect, option.text);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(isCorrect, answerText) {
+            userAnswers.push({
+                question: currentQuestions[currentQuestionIndex].text,
+                answer: answerText,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                score++;
+            }
+            
+            currentQuestionIndex++;
+            if (currentQuestionIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            const total = currentQuestions.length;
+            const percent = (score / total) * 100;
+            
+            let grade = 2;
+            if (percent >= 90) grade = 5;
+            else if (percent >= 70) grade = 4;
+            else if (percent >= 50) grade = 3;
+            else grade = 2;
+
+            const gradeElement = document.getElementById('final-grade');
+            gradeElement.innerText = grade;
+            gradeElement.className = 'grade-result grade-' + grade;
+            
+            let resultText = '';
+            if (grade === 5) resultText = '🏆 Отлично! Ты эксперт цифровой безопасности!';
+            else if (grade === 4) resultText = '💪 Хорошо! Есть куда расти.';
+            else if (grade === 3) resultText = '📚 Неплохо, но стоит подучить.';
+            else resultText = '🌱 Нужно ещё разобраться в теме.';
+            
+            document.getElementById('result-text').innerText = resultText;
+            
+            if (grade >= 4) {
+                launchConfetti();
+            }
+            
+            sendToGoogleSheets(studentName, grade, score, total, userAnswers);
+        }
+
+        function sendToGoogleSheets(name, grade, correct, total, answers) {
+            const statusElement = document.getElementById('sending-status');
+            
+            const answersString = answers.map((a, idx) => 
+                `В${idx+1}: ${a.correct ? '✅' : '❌'} ${a.answer.substring(0, 50)}...`
+            ).join(' | ');
+            
+            const data = {
+                name: name,
+                class: selectedGrade,
+                grade: grade,
+                correct: correct,
+                total: total,
+                answers: answersString
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                statusElement.innerText = '✅ Результат сохранён! Спасибо!';
+                statusElement.style.color = '#27ae60';
+            })
+            .catch(() => {
+                statusElement.innerText = '⚠️ Не удалось сохранить, но оценка показана.';
+                statusElement.style.color = '#e74c3c';
+            });
+        }
+
+        function launchConfetti() {
+            const colors = ['#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#38f9d7', '#fa709a', '#fee140'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 50);
+            }
+        }
+
+        function resetToStart() {
+            document.getElementById('student-name').value = '';
+            document.getElementById('sending-status').innerText = '📤 Сохраняем результат...';
+            document.getElementById('sending-status').style.color = '#7f8c8d';
+            document.querySelectorAll('.container').forEach(c => c.classList.add('hidden'));
+            document.getElementById('grade-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
